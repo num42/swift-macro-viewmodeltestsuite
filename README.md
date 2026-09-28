@@ -2,6 +2,11 @@
 A Swift macro that generates the members every view model test suite repeats: the `tester` that
 drives the view model, and the parameterized test that runs the suite's `actionCases`.
 
+## Requirements
+
+- Swift 6.3 toolchain or later (tested with Xcode 27)
+- Platforms: macOS 14, iOS 13, tvOS 13, watchOS 6, macCatalyst 13
+
 ## Overview
 
 Annotate a `final class` suite with `@ViewModelTestSuite` and declare
@@ -69,7 +74,7 @@ The test is emitted in an extension, not as a member. Swift Testing's `@Test` on
 enclosing type of macro-generated code when that code is nested in a type declaration of the same
 expansion. As a member, `@Test` would generate code for file scope, which does not compile.
 
-## Requirements
+## Constraints
 
 - The suite is a class. A struct cannot initialize a `lazy var` from its non-mutating test methods.
 - It declares `func makeViewModel()` without parameters and with an explicit return type.
@@ -79,7 +84,7 @@ expansion. As a member, `@Test` would generate code for file scope, which does n
   [kali-app-mobile](https://github.com/num42/kali-app-mobile), `ViewModelTester` and `ActionCase`
   are in the `UnitTestSupport` module.
 
-The macro reports an error for each unmet requirement.
+The macro reports an error for each unmet constraint.
 
 ## Testing
 
@@ -87,6 +92,6 @@ The macro reports an error for each unmet requirement.
 swift test --enable-experimental-prebuilts
 ```
 
-The test target enables `InternalImportsByDefault`. SwiftPM's generated test entry point uses a
-plain `import Testing`, which since Swift 6.4 clashes with the `internal import Testing` in the
-test files otherwise.
+All targets enable `InternalImportsByDefault`. SwiftPM's generated test entry point uses a plain
+`import Testing`, which since Swift 6.4 clashes with the `internal import Testing` in the test
+files otherwise.

@@ -7,15 +7,15 @@ on:
     branches:
       - main
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
+
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: xcode-27
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
-
-      - name: Select Xcode
-        run: sh .github/select-xcode.sh
+        uses: actions/checkout@v7
 
       - name: Test Build
         run: swift build -Xswiftc -warnings-as-errors --enable-experimental-prebuilts
@@ -23,13 +23,10 @@ jobs:
       - name: Run Tests
         run: swift test -Xswiftc -warnings-as-errors --enable-experimental-prebuilts
   format:
-    runs-on: macos-latest
+    runs-on: xcode-27
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
-
-      - name: Select Xcode
-        run: sh .github/select-xcode.sh
+        uses: actions/checkout@v7
 
       - name: Run formatter
         run: sh .github/format.sh
@@ -38,7 +35,5 @@ jobs:
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             echo "Formatting changes detected."
-            git status --porcelain
-            git diff
             exit 1
           fi
