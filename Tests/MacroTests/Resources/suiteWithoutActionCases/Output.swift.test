@@ -1,0 +1,12 @@
+@Suite("OnboardingViewModel", .serialized)
+final class OnboardingViewModelTests {
+  func makeViewModel() -> OnboardingViewModel {
+    OnboardingViewModel(dependencies: .init(), parameters: .init())
+  }
+
+  @Test func close() {
+    tester.dispatch(OnboardingViewModel.Actions.Close())
+  }
+
+    lazy var tester: ViewModelTester<OnboardingViewModel> = ViewModelTester(makeViewModel())
+}

@@ -1,0 +1,20 @@
+@Suite("CropListViewModel", .serialized)
+@ViewModelTestSuite
+final class CropListViewModelTests {
+  let mediaStore = MediaStoreMock()
+
+  func makeViewModel() -> CropListViewModel {
+    CropListViewModel(
+      dependencies: .init(mediaStore: mediaStore),
+      parameters: .init()
+    )
+  }
+
+  static let actionCases: [ActionCase<CropListViewModel>] = [
+    .init(
+      "ShowAllDeficiencies triggers ShowAllDeficiencies",
+      action: { CropListViewModel.Actions.ShowAllDeficiencies() },
+      matches: { $0.kt.trigger is CropListState.TriggerShowAllDeficiencies }
+    )
+  ]
+}
