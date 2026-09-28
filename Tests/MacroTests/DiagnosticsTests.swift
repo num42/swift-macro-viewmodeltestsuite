@@ -1,16 +1,11 @@
-internal import MacroTester
-internal import SwiftSyntaxMacros
-internal import SwiftSyntaxMacrosTestSupport
+internal import SwiftSyntaxMacrosGenericTestSupport
 internal import Testing
 
 #if canImport(ViewModelTestSuiteMacros)
   import ViewModelTestSuiteMacros
 
-  @Suite struct ViewModelTestSuiteDiagnosticsTests {
-    let testMacros: [String: Macro.Type] = [
-      "ViewModelTestSuite": ViewModelTestSuiteMacro.self
-    ]
-
+  @Suite
+  struct ViewModelTestSuiteDiagnosticsTests {
     @Test func structThrowsError() {
       assertMacroExpansion(
         """

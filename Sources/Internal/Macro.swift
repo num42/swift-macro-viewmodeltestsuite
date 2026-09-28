@@ -20,11 +20,11 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
   }
 
   public static func expansion(
-    of node: SwiftSyntax.AttributeSyntax,
-    providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax,
+    of attribute: AttributeSyntax,
+    providingMembersOf declaration: some DeclGroupSyntax,
     conformingTo protocols: [TypeSyntax],
-    in context: some SwiftSyntaxMacros.MacroExpansionContext
-  ) throws -> [SwiftSyntax.DeclSyntax] {
+    in context: some MacroExpansionContext
+  ) throws -> [DeclSyntax] {
     /*
      Expansion algorithm (high level):
 
@@ -37,7 +37,7 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
         parameterized `actionUpdatesState(_:)` test, which runs each `ActionCase` through the tester.
     */
 
-    let suite = try Suite(declaration, attribute: node)
+    let suite = try Suite(declaration, attribute: attribute)
 
     return [
       """
@@ -47,14 +47,14 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
   }
 
   public static func expansion(
-    of node: AttributeSyntax,
+    of attribute: AttributeSyntax,
     attachedTo declaration: some DeclGroupSyntax,
     providingExtensionsOf type: some TypeSyntaxProtocol,
     conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext
   ) throws -> [ExtensionDeclSyntax] {
     // The member expansion reports invalid suites. Reporting them here too would duplicate them.
-    guard let suite = try? Suite(declaration, attribute: node), suite.hasActionCases else {
+    guard let suite = try? Suite(declaration, attribute: attribute), suite.hasActionCases else {
       return []
     }
 
@@ -77,9 +77,9 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
     let viewModelType: String
     let hasActionCases: Bool
 
-    init(_ declaration: some DeclGroupSyntax, attribute node: AttributeSyntax) throws {
+    init(_ declaration: some DeclGroupSyntax, attribute: AttributeSyntax) throws {
       guard let classDeclaration = declaration.as(ClassDeclSyntax.self) else {
-        throw ViewModelTestSuiteMacro.diagnose(.requiresClass, at: node)
+        throw ViewModelTestSuiteMacro.diagnose(.requiresClass, at: attribute)
       }
 
       let members = classDeclaration.memberBlock.members
@@ -93,7 +93,7 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
           }),
         let viewModelType = makeViewModel.signature.returnClause?.type.trimmedDescription
       else {
-        throw ViewModelTestSuiteMacro.diagnose(.requiresMakeViewModel, at: node)
+        throw ViewModelTestSuiteMacro.diagnose(.requiresMakeViewModel, at: attribute)
       }
 
       let actionCases =
@@ -108,7 +108,7 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
       if let actionCases,
         !actionCases.modifiers.contains(where: { $0.name.tokenKind == .keyword(.static) })
       {
-        throw ViewModelTestSuiteMacro.diagnose(.requiresStaticActionCases, at: node)
+        throw ViewModelTestSuiteMacro.diagnose(.requiresStaticActionCases, at: attribute)
       }
 
       self.viewModelType = viewModelType
@@ -118,9 +118,9 @@ public struct ViewModelTestSuiteMacro: MemberMacro, ExtensionMacro {
 
   fileprivate static func diagnose(
     _ message: MacroDiagnostic,
-    at node: AttributeSyntax
+    at attribute: AttributeSyntax
   ) -> DiagnosticsError {
     // Only thrown, not also passed to `context.diagnose`, which would report it twice.
-    DiagnosticsError(diagnostics: [Diagnostic(node: Syntax(node), message: message)])
+    DiagnosticsError(diagnostics: [Diagnostic(node: Syntax(attribute), message: message)])
   }
 }
