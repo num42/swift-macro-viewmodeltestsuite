@@ -1,3 +1,4 @@
+internal import MacroTestHelper
 internal import SwiftSyntaxMacrosGenericTestSupport
 internal import Testing
 
@@ -7,7 +8,7 @@ internal import Testing
   @Suite
   struct ViewModelTestSuiteDiagnosticsTests {
     @Test func structThrowsError() {
-      assertMacroExpansion(
+      MacroTestHelper.assertMacroExpansion(
         """
         @ViewModelTestSuite
         struct NotAClass {
@@ -31,7 +32,7 @@ internal import Testing
     }
 
     @Test func missingMakeViewModelThrowsError() {
-      assertMacroExpansion(
+      MacroTestHelper.assertMacroExpansion(
         """
         @ViewModelTestSuite
         final class MissingMakeViewModel {
@@ -55,7 +56,7 @@ internal import Testing
     }
 
     @Test func makeViewModelWithoutReturnTypeThrowsError() {
-      assertMacroExpansion(
+      MacroTestHelper.assertMacroExpansion(
         """
         @ViewModelTestSuite
         final class MissingReturnType {
@@ -79,7 +80,7 @@ internal import Testing
     }
 
     @Test func instanceActionCasesThrowsError() {
-      assertMacroExpansion(
+      MacroTestHelper.assertMacroExpansion(
         """
         @ViewModelTestSuite
         final class InstanceActionCases {
